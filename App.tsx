@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { View, Answers, DiagnosticResult } from './types';
 import { MAIN_COPIES, QUESTIONS, CONCEPT_TEXT, PRIVACY_POLICY, DISCLAIMER } from './constants';
@@ -7,12 +6,21 @@ import { getAIAdvice } from './services/gemini';
 import Chart from './components/RadarChart';
 import { ChevronRight, CheckCircle, AlertTriangle, ArrowRight, BrainCircuit, RefreshCw, Skull, Sparkles, Zap, Target, Twitter, Loader2, ExternalLink, ShieldCheck, Users, Sword, Compass } from 'lucide-react';
 
+// GitHubの画像URL定義（ここを追加修正しました）
+const CHARACTER_IMAGES: Record<string, string> = {
+  ARCHITECT: "https://raw.githubusercontent.com/k09876567890e-dot/bizpower-app/main/architect.png",
+  GUARDIAN: "https://raw.githubusercontent.com/k09876567890e-dot/bizpower-app/main/guardian.png",
+  NOMAD: "https://raw.githubusercontent.com/k09876567890e-dot/bizpower-app/main/nomad.png",
+  REVOLUTIONARY: "https://raw.githubusercontent.com/k09876567890e-dot/bizpower-app/main/revolutionary.png",
+  STRATEGIST: "https://raw.githubusercontent.com/k09876567890e-dot/bizpower-app/main/strategist.png",
+};
+
 const App: React.FC = () => {
   const [view, setView] = useState<View>('home');
   const [answers, setAnswers] = useState<Answers>({});
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [result, setResult] = useState<DiagnosticResult | null>(null);
-  
+   
   const [aiAdvice, setAiAdvice] = useState<string | null>(null);
   const [loadingContent, setLoadingContent] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -51,7 +59,7 @@ const App: React.FC = () => {
   const handleAnswer = (questionId: number, option: any) => {
     if (isTransitioning) return;
     setAnswers(prev => ({ ...prev, [questionId]: option }));
-    
+   
     if (currentQuestionIndex < QUESTIONS.length - 1) {
       setIsTransitioning(true);
       setTimeout(() => {
@@ -196,13 +204,14 @@ const App: React.FC = () => {
                     </div>
                   ) : (
                     <img 
-                      src={result.imagePath} 
+                      /* ここを修正：GitHubのURLを使用するように変更 */
+                      src={CHARACTER_IMAGES[result.type] || result.imagePath} 
                       alt={result.characterName} 
                       crossOrigin="anonymous"
                       referrerPolicy="no-referrer"
                       onLoad={() => setImageLoaded(true)}
                       onError={(e) => {
-                        console.error("Image failed to load:", result.imagePath);
+                        console.error("Image failed to load:", CHARACTER_IMAGES[result.type] || result.imagePath);
                         setImageError(true);
                       }}
                       className={`w-full h-full object-cover transition-opacity duration-700 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`} 
@@ -308,9 +317,9 @@ const App: React.FC = () => {
                   <div key={i} className="bg-white border border-slate-100 p-10 rounded-[2.5rem] flex flex-col items-center justify-between hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 group">
                     <div className="w-full text-center">
                       <div className="mb-8 flex justify-center">
-                         <div className="p-5 bg-indigo-50 rounded-[1.5rem] group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300">
-                          <CheckCircle size={32} />
-                         </div>
+                          <div className="p-5 bg-indigo-50 rounded-[1.5rem] group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300">
+                           <CheckCircle size={32} />
+                          </div>
                       </div>
                       <h4 className="font-black text-slate-900 mb-5 tracking-tight text-xl">{action.label}</h4>
                       <p className="text-sm text-slate-500 leading-relaxed font-bold mb-10 min-h-[3rem]">{action.description}</p>
