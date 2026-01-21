@@ -107,11 +107,11 @@ const App: React.FC = () => {
           <div className="bg-indigo-600 p-1.5 rounded-lg shadow-sm"><Zap className="text-white fill-white" size={18} /></div>
           BizPower
         </div>
-        {/* 【修正】ここにメニューリンクを復活させました */}
+        {/* 【修正】日本語表記に統一 */}
         <nav className="hidden sm:flex gap-8 text-xs font-black uppercase tracking-widest text-slate-500">
           <button onClick={() => setView('concept')} className="hover:text-indigo-600 transition">運営理念</button>
-          <button onClick={() => setView('policy')} className="hover:text-indigo-600 transition">Privacy Policy</button>
-          <button onClick={() => setView('disclaimer')} className="hover:text-indigo-600 transition">Terms</button>
+          <button onClick={() => setView('policy')} className="hover:text-indigo-600 transition">プライバシーポリシー</button>
+          <button onClick={() => setView('disclaimer')} className="hover:text-indigo-600 transition">利用規約</button>
         </nav>
       </div>
     </header>
