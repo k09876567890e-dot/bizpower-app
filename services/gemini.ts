@@ -1,29 +1,37 @@
 import { Answers, DiagnosticResult } from '../types';
 
+/**
+ * コスト最安・最速の Gemini 1.5 Flash を確実に呼び出す設定
+ */
 export const getAIAdvice = async (answers: Answers, result: DiagnosticResult): Promise<string> => {
-  // キーの名前が違っても動くように2パターン確認します
+  // 環境変数の読み込み（Vite/Vercel用）
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY || import.meta.env.VITE_API_KEY;
 
   if (!apiKey) {
-    return "システム設定エラー：APIキーが見つかりません。Vercelの環境変数を確認してください。";
+    return "APIキーが見つかりません。Vercelの設定を確認してください。";
   }
 
-  // 1.5 Flashモデルを使用（安定・高速）
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+  // 【修正の肝】
+  // 短い名前ではなく、確実に存在する「正式バージョン名」を指定します。
+  // これで "404 not found" を回避します。
+  const model = "gemini-1.5-flash-latest";
+  
+  // Flashは v1beta で呼び出すのが必須です
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
   const answerSummary = Object.entries(answers).map(([qid, opt]) => `Q${qid}: ${opt.label}`).join('\n');
     
   const prompt = `
-  あなたはキャリアのプロです。以下のユーザーに「辛口かつ具体的」なアドバイスをください。
+  あなたは辛口のキャリアアドバイザーです。以下の診断結果のユーザーに、300文字以内で具体的なアドバイスをしてください。
   
-  【ユーザー】${result.characterName}
-  【弱点環境】${result.toxicEnvironment}
-  【回答】${answerSummary}
+  【ユーザータイプ】${result.characterName}
+  【弱点・毒の沼】${result.toxicEnvironment}
+  【回答傾向】${answerSummary}
   
   制約：
-  ・日本語で300文字以内
-  ・抽象論禁止。具体的な行動を指示すること
-  ・「毒の沼」から抜け出す方法を提案すること
+  ・抽象的な励ましは禁止。具体的な行動を提案すること。
+  ・「毒の沼」から抜け出すための第一歩を示すこと。
+  ・トーンは論理的かつ、少し厳しめに。
   `;
 
   try {
@@ -32,7 +40,7 @@ export const getAIAdvice = async (answers: Answers, result: DiagnosticResult): P
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         contents: [{ parts: [{ text: prompt }] }],
-        // 【重要】辛辣な言葉でもエラーにならないよう、安全フィルターを無効化します
+        // 安全フィルターを解除（辛口アドバイスがブロックされないようにする）
         safetySettings: [
           { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
           { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
@@ -44,16 +52,17 @@ export const getAIAdvice = async (answers: Answers, result: DiagnosticResult): P
 
     if (!response.ok) {
       const errorData = await response.json();
-      console.error("Gemini Error:", errorData);
-      // エラー内容を画面に表示して原因をわかるようにします
-      return `AIエラー (${response.status}): ${errorData.error?.message || "不明なエラー"}`;
+      console.error("Gemini API Error:", errorData);
+      
+      // 万が一 Flash がダメだった場合のエラー表示
+      return `AIエラー (${response.status}): ${errorData.error?.message || "モデルが見つかりません"}`;
     }
 
     const data = await response.json();
-    return data.candidates?.[0]?.content?.parts?.[0]?.text || "アドバイスの生成に失敗しました（空の応答）。";
+    return data.candidates?.[0]?.content?.parts?.[0]?.text || "アドバイスの生成に失敗しました。";
 
   } catch (error) {
-    console.error("Connection Error:", error);
-    return "通信エラーが発生しました。ネットワーク環境を確認してください。";
+    console.error("Network Error:", error);
+    return "通信エラーが発生しました。時間を置いて再試行してください。";
   }
 };
