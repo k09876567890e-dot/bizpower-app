@@ -198,8 +198,10 @@ const App: React.FC = () => {
                     <img 
                       src={result.imagePath} 
                       alt={result.characterName} 
+                      crossOrigin="anonymous"
+                      referrerPolicy="no-referrer"
                       onLoad={() => setImageLoaded(true)}
-                      onError={() => {
+                      onError={(e) => {
                         console.error("Image failed to load:", result.imagePath);
                         setImageError(true);
                       }}
