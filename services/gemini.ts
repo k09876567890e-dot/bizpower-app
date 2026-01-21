@@ -1,4 +1,4 @@
-// 正規のSDKをインポート
+// 正規のSDKをインポート（Step 1を行ったので、これで動きます）
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { Answers, DiagnosticResult } from '../types';
 
@@ -6,14 +6,15 @@ export const getAIAdvice = async (answers: Answers, result: DiagnosticResult): P
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY || import.meta.env.VITE_API_KEY;
 
   if (!apiKey) {
-    return "APIキーが見つかりません。";
+    return "APIキーが見つかりません。Vercelの環境変数を確認してください。";
   }
 
   try {
-    // SDKを初期化
+    // SDK初期化
     const genAI = new GoogleGenerativeAI(apiKey);
     
-    // destiny-appでも動いているはずの標準モデル指定
+    // destiny-appでも動いている標準モデルを指定
+    // SDK経由なら "gemini-1.5-flash" で自動的に適切なバージョンに繋がります
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const answerSummary = Object.entries(answers).map(([qid, opt]) => `Q${qid}: ${opt.label}`).join('\n');
@@ -34,7 +35,6 @@ export const getAIAdvice = async (answers: Answers, result: DiagnosticResult): P
 
   } catch (error: any) {
     console.error("Gemini SDK Error:", error);
-    // エラーの詳細を表示
-    return `AIエラー: ${error.message || "不明なエラーが発生しました"}`;
+    return `AIエラー: ${error.message || "詳細不明"}`;
   }
 };
