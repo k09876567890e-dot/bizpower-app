@@ -6,13 +6,19 @@ import { getAIAdvice } from './services/gemini';
 import Chart from './components/RadarChart';
 import { ChevronRight, CheckCircle, AlertTriangle, ArrowRight, BrainCircuit, RefreshCw, Skull, Sparkles, Zap, Target, Twitter, Loader2, ExternalLink, ShieldCheck, Users, Sword, Compass } from 'lucide-react';
 
-// GitHubの画像URL定義（ここを追加修正しました）
+// 画像を Import して Vercel に認識させる
+import architectImg from './architect.png';
+import guardianImg from './guardian.png';
+import nomadImg from './nomad.png';
+import revolutionaryImg from './revolutionary.png';
+import strategistImg from './strategist.png';
+
 const CHARACTER_IMAGES: Record<string, string> = {
-  ARCHITECT: "https://raw.githubusercontent.com/k09876567890e-dot/bizpower-app/main/architect.png",
-  GUARDIAN: "https://raw.githubusercontent.com/k09876567890e-dot/bizpower-app/main/guardian.png",
-  NOMAD: "https://raw.githubusercontent.com/k09876567890e-dot/bizpower-app/main/nomad.png",
-  REVOLUTIONARY: "https://raw.githubusercontent.com/k09876567890e-dot/bizpower-app/main/revolutionary.png",
-  STRATEGIST: "https://raw.githubusercontent.com/k09876567890e-dot/bizpower-app/main/strategist.png",
+  ARCHITECT: architectImg,
+  GUARDIAN: guardianImg,
+  NOMAD: nomadImg,
+  REVOLUTIONARY: revolutionaryImg,
+  STRATEGIST: strategistImg,
 };
 
 const App: React.FC = () => {
@@ -204,7 +210,6 @@ const App: React.FC = () => {
                     </div>
                   ) : (
                     <img 
-                      /* ここを修正：GitHubのURLを使用するように変更 */
                       src={CHARACTER_IMAGES[result.type] || result.imagePath} 
                       alt={result.characterName} 
                       crossOrigin="anonymous"
@@ -285,25 +290,25 @@ const App: React.FC = () => {
              
              <div className="flex items-center gap-4 mb-12 text-rose-700">
                 <div className="bg-rose-100 p-3 rounded-2xl">
-                  <AlertTriangle size={28} className="text-rose-600" />
+                  <AlertTriangle size={32} className="text-rose-600" />
                 </div>
-                <h3 className="font-black text-sm uppercase tracking-[0.3em]">警告：才能を殺す「毒の沼」環境</h3>
+                <h3 className="font-black text-xl sm:text-2xl uppercase tracking-[0.2em] leading-tight">警告：才能を殺す「毒の沼」環境</h3>
              </div>
              
              <div className="grid md:grid-cols-2 gap-16 relative z-10">
                 <div className="space-y-6">
-                   <div className="text-[11px] text-rose-400 font-black uppercase tracking-[0.3em] flex items-center gap-2">
+                   <div className="text-xs text-rose-400 font-black uppercase tracking-[0.3em] flex items-center gap-2">
                      <span className="w-1.5 h-1.5 rounded-full bg-rose-300"></span> 致命的な相性
                    </div>
-                   <p className="text-rose-950 font-black text-2xl sm:text-3xl leading-snug tracking-tight">
+                   <p className="text-rose-950 font-bold text-xl sm:text-2xl leading-relaxed tracking-tight">
                      {result.toxicEnvironment}
                    </p>
                 </div>
                 <div className="space-y-6">
-                   <div className="text-[11px] text-rose-400 font-black uppercase tracking-[0.3em] flex items-center gap-2">
+                   <div className="text-xs text-rose-400 font-black uppercase tracking-[0.3em] flex items-center gap-2">
                      <span className="w-1.5 h-1.5 rounded-full bg-rose-300"></span> 予見される末路
                    </div>
-                   <p className="text-rose-900 font-bold text-lg sm:text-xl leading-relaxed antialiased">
+                   <p className="text-rose-950 font-bold text-xl sm:text-2xl leading-relaxed tracking-tight">
                      {result.fateWarning}
                    </p>
                 </div>
