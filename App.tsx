@@ -4,9 +4,10 @@ import { MAIN_COPIES, QUESTIONS, CONCEPT_TEXT, PRIVACY_POLICY, DISCLAIMER } from
 import { calculateResult } from './utils';
 import { getAIAdvice } from './services/gemini';
 import Chart from './components/RadarChart';
-import { ChevronRight, CheckCircle, AlertTriangle, ArrowRight, BrainCircuit, RefreshCw, Skull, Sparkles, Zap, Target, Twitter, Loader2, ExternalLink, ShieldCheck, Users, Sword, Compass } from 'lucide-react';
+// 【修正】ChevronLeft を追加（戻るボタン用）
+import { ChevronRight, ChevronLeft, CheckCircle, AlertTriangle, ArrowRight, BrainCircuit, RefreshCw, Skull, Sparkles, Zap, Target, Twitter, Loader2, ExternalLink, ShieldCheck, Users, Sword, Compass } from 'lucide-react';
 
-// 【修正完了】難しいImportをやめて、GitHubの画像を直接参照します（これが一番確実です）
+// GitHubの画像を直接参照（そのまま維持）
 const CHARACTER_IMAGES: Record<string, string> = {
   ARCHITECT: "https://raw.githubusercontent.com/k09876567890e-dot/bizpower-app/main/architect.png",
   GUARDIAN: "https://raw.githubusercontent.com/k09876567890e-dot/bizpower-app/main/guardian.png",
@@ -54,6 +55,15 @@ const App: React.FC = () => {
     setIsTransitioning(false);
     setView('diagnosis');
     window.scrollTo(0, 0);
+  };
+
+  // 【追加】戻るボタンの処理
+  const handleBack = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(prev => prev - 1);
+    } else {
+      setView('home'); // 1問目で戻るとトップへ
+    }
   };
 
   const handleAnswer = (questionId: number, option: any) => {
@@ -157,7 +167,17 @@ const App: React.FC = () => {
         <div className="w-full h-2 bg-slate-200 sticky top-16 z-50">
           <div className="bg-indigo-600 h-full transition-all duration-300 ease-out" style={{ width: `${progress}%` }}></div>
         </div>
-        <div className="max-w-2xl w-full mx-auto px-4 py-20 flex-grow flex flex-col justify-center">
+        {/* 【修正】relative を追加して、戻るボタンの配置基準にします */}
+        <div className="max-w-2xl w-full mx-auto px-4 py-20 flex-grow flex flex-col justify-center relative">
+          
+          {/* 【追加】ここに戻るボタンを配置 */}
+          <button 
+            onClick={handleBack} 
+            className="absolute top-4 left-0 sm:left-4 text-slate-400 hover:text-indigo-600 flex items-center gap-1 text-sm font-bold transition-colors z-10 p-2"
+          >
+            <ChevronLeft size={20} /> 戻る
+          </button>
+
           <div className="mb-12 text-center">
             <div className="text-indigo-600 font-black text-xs tracking-[0.2em] mb-4 uppercase">第 {question.id} 問 / {QUESTIONS.length}</div>
             <h2 className="text-2xl sm:text-3xl font-black text-slate-900 leading-snug tracking-tight">{question.text}</h2>
