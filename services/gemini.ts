@@ -1,40 +1,42 @@
-// 正規のSDKをインポート（Step 1を行ったので、これで動きます）
-import { GoogleGenerativeAI } from "@google/generative-ai";
+
+import { GoogleGenAI } from "@google/genai";
 import { Answers, DiagnosticResult } from '../types';
 
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+
+/**
+ * 診断結果に基づいたAIアドバイスを生成（Gemini 3 Flash）
+ */
 export const getAIAdvice = async (answers: Answers, result: DiagnosticResult): Promise<string> => {
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY || import.meta.env.VITE_API_KEY;
-
-  if (!apiKey) {
-    return "APIキーが見つかりません。Vercelの環境変数を確認してください。";
-  }
-
   try {
-    // SDK初期化
-    const genAI = new GoogleGenerativeAI(apiKey);
-    
-    // destiny-appでも動いている標準モデルを指定
-    // SDK経由なら "gemini-1.5-flash" で自動的に適切なバージョンに繋がります
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
     const answerSummary = Object.entries(answers).map(([qid, opt]) => `Q${qid}: ${opt.label}`).join('\n');
     
     const prompt = `
-    あなたは辛口のキャリアアドバイザーです。以下のユーザーに300文字以内でアドバイスをください。
+    あなたは、深層心理学と組織行動学に精通したキャリアアドバイザーです。
+    診断結果に基づき、ユーザーの現状の苦しみの正体を言語化し、進むべき道をアドバイスしてください。
     
-    【ユーザー】${result.characterName}
-    【弱点】${result.toxicEnvironment}
-    【回答】${answerSummary}
+    【診断結果】
+    タイプ: ${result.characterName}
+    キャッチコピー: ${result.catchphrase}
+    回避すべき環境: ${result.toxicEnvironment}
     
-    具体的かつ論理的に、毒の沼から抜け出す方法を提案してください。
+    【回答要約】
+    ${answerSummary}
+    
+    【制約】
+    ・日本語で回答してください。
+    ・200文字程度に凝縮してください。
+    ・論理的かつ勇気を与えるトーンで。
     `;
 
-    const resultAI = await model.generateContent(prompt);
-    const response = await resultAI.response;
-    return response.text();
+    const response = await ai.models.generateContent({
+      model: 'gemini-3-flash-preview',
+      contents: prompt,
+    });
 
-  } catch (error: any) {
-    console.error("Gemini SDK Error:", error);
-    return `AIエラー: ${error.message || "詳細不明"}`;
+    return response.text || "アドバイスの生成に失敗しました。";
+  } catch (error) {
+    console.error("Gemini API Error (Text):", error);
+    return "AIアドバイスを読み込めませんでした。";
   }
 };
