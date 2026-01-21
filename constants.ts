@@ -1,8 +1,8 @@
 
 import { Question, ResultType, DiagnosticResult } from './types';
 
-// ★ここをあなたのGitHubのURLに合わせて書き換えてください★
-const GITHUB_IMAGE_BASE = "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/";
+// GitHubのRawリンクベースURLをユーザーのリポジトリに設定
+const GITHUB_IMAGE_BASE = "https://raw.githubusercontent.com/k09876567890e-dot/bizpower-app/main/";
 
 export const MAIN_COPIES = [
   "あなたの「ビジネス戦闘力」を測定します。",
