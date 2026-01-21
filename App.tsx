@@ -4,7 +4,6 @@ import { MAIN_COPIES, QUESTIONS, CONCEPT_TEXT, PRIVACY_POLICY, DISCLAIMER } from
 import { calculateResult } from './utils';
 import { getAIAdvice } from './services/gemini';
 import Chart from './components/RadarChart';
-// 戻るボタン用に ChevronLeft を追加
 import { ChevronRight, ChevronLeft, CheckCircle, AlertTriangle, ArrowRight, BrainCircuit, RefreshCw, Skull, Sparkles, Zap, Target, Twitter, Loader2, ExternalLink, ShieldCheck, Users, Sword, Compass } from 'lucide-react';
 
 const CHARACTER_IMAGES: Record<string, string> = {
@@ -35,6 +34,7 @@ const App: React.FC = () => {
           setAiAdvice(advice);
         } catch (error) {
           console.error("AI Fetch Error:", error);
+          setAiAdvice("エラーが発生しました。");
         } finally {
           setLoadingContent(false);
         }
@@ -55,12 +55,11 @@ const App: React.FC = () => {
     window.scrollTo(0, 0);
   };
 
-  // 【追加】戻るボタンの機能
   const handleBack = () => {
     if (currentQuestionIndex > 0) {
       setCurrentQuestionIndex(prev => prev - 1);
     } else {
-      setView('home'); // 1問目で押すとトップへ戻る
+      setView('home');
     }
   };
 
@@ -108,8 +107,11 @@ const App: React.FC = () => {
           <div className="bg-indigo-600 p-1.5 rounded-lg shadow-sm"><Zap className="text-white fill-white" size={18} /></div>
           BizPower
         </div>
+        {/* 【修正】ここにメニューリンクを復活させました */}
         <nav className="hidden sm:flex gap-8 text-xs font-black uppercase tracking-widest text-slate-500">
+          <button onClick={() => setView('concept')} className="hover:text-indigo-600 transition">運営理念</button>
           <button onClick={() => setView('policy')} className="hover:text-indigo-600 transition">Privacy Policy</button>
+          <button onClick={() => setView('disclaimer')} className="hover:text-indigo-600 transition">Terms</button>
         </nav>
       </div>
     </header>
@@ -159,13 +161,10 @@ const App: React.FC = () => {
           <div className="bg-indigo-600 h-full transition-all duration-300 ease-out" style={{ width: `${progress}%` }}></div>
         </div>
         
-        {/* 【修正】relativeを追加し、戻るボタンを配置 */}
         <div className="max-w-2xl w-full mx-auto px-4 py-12 flex-grow flex flex-col justify-center relative">
-          
           <button onClick={handleBack} className="absolute top-0 left-0 text-slate-400 hover:text-indigo-600 flex items-center gap-1 text-sm font-bold transition-colors py-4">
             <ChevronLeft size={20} /> 戻る
           </button>
-
           <div className="mb-12 text-center mt-8">
             <div className="text-indigo-600 font-black text-xs tracking-[0.2em] mb-4 uppercase">Q. {question.id} / {QUESTIONS.length}</div>
             <h2 className="text-2xl sm:text-3xl font-black text-slate-900 leading-snug tracking-tight">{question.text}</h2>
@@ -190,7 +189,6 @@ const App: React.FC = () => {
         <div className={`relative pt-16 pb-24 px-4 bg-gradient-to-b ${result.colorTheme} to-indigo-950 overflow-hidden`}>
           <div className="relative z-10 max-w-lg mx-auto text-center">
              <div className="inline-block px-4 py-1.5 bg-white/10 backdrop-blur-lg rounded-full border border-white/20 text-[10px] font-black mb-8 text-white tracking-[0.3em]">COMPLETE</div>
-             
              <div className="bg-white rounded-[3rem] p-0 mb-10 shadow-2xl relative overflow-hidden">
                 <div className={`h-2.5 bg-gradient-to-r ${result.colorTheme}`}></div>
                 <div className="w-full aspect-square bg-slate-100 flex items-center justify-center relative overflow-hidden">
@@ -206,7 +204,6 @@ const App: React.FC = () => {
                   )}
                   <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-white via-white/40 to-transparent"></div>
                 </div>
-
                 <div className="px-10 pb-14 pt-2">
                   <h2 className="text-4xl font-black mb-3 text-slate-900">{result.characterName}</h2>
                   <p className="text-base text-slate-500 font-bold italic mb-10">"{result.catchphrase}"</p>
@@ -227,7 +224,6 @@ const App: React.FC = () => {
               </button>
           </div>
         </div>
-
         <div className="max-w-4xl mx-auto px-4 -mt-16 relative z-20 space-y-12">
           <div className="bg-indigo-600 rounded-[3rem] p-10 text-white shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 right-0 p-12 opacity-10 rotate-12"><BrainCircuit size={180} /></div>
@@ -245,7 +241,6 @@ const App: React.FC = () => {
               )}
             </div>
           </div>
-
           <div className="bg-white border border-slate-200 rounded-[3rem] p-10 sm:p-14 shadow-xl">
              <div className="flex flex-col lg:flex-row gap-16 items-center">
                 <div className="w-full lg:w-1/2"><Chart data={result.radarData} /></div>
@@ -255,7 +250,6 @@ const App: React.FC = () => {
                 </div>
              </div>
           </div>
-
           <div className="text-center pt-8">
              <h3 className="text-3xl font-black text-slate-900 mb-14">あなたが真に輝く戦場</h3>
              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -271,7 +265,6 @@ const App: React.FC = () => {
                ))}
              </div>
           </div>
-
           <div className="text-center pt-24 pb-12">
               <button onClick={startDiagnosis} className="text-slate-400 hover:text-indigo-600 flex items-center justify-center gap-3 mx-auto transition-colors text-xs font-black uppercase tracking-[0.3em] py-4 px-8 rounded-full hover:bg-slate-100">
                 <RefreshCw size={16} /> 新しい診断を開始する
