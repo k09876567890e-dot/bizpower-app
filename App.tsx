@@ -6,19 +6,13 @@ import { getAIAdvice } from './services/gemini';
 import Chart from './components/RadarChart';
 import { ChevronRight, CheckCircle, AlertTriangle, ArrowRight, BrainCircuit, RefreshCw, Skull, Sparkles, Zap, Target, Twitter, Loader2, ExternalLink, ShieldCheck, Users, Sword, Compass } from 'lucide-react';
 
-// 画像を Import して Vercel に認識させる
-import architectImg from './architect.png';
-import guardianImg from './guardian.png';
-import nomadImg from './nomad.png';
-import revolutionaryImg from './revolutionary.png';
-import strategistImg from './strategist.png';
-
+// 【修正完了】難しいImportをやめて、GitHubの画像を直接参照します（これが一番確実です）
 const CHARACTER_IMAGES: Record<string, string> = {
-  ARCHITECT: architectImg,
-  GUARDIAN: guardianImg,
-  NOMAD: nomadImg,
-  REVOLUTIONARY: revolutionaryImg,
-  STRATEGIST: strategistImg,
+  ARCHITECT: "https://raw.githubusercontent.com/k09876567890e-dot/bizpower-app/main/architect.png",
+  GUARDIAN: "https://raw.githubusercontent.com/k09876567890e-dot/bizpower-app/main/guardian.png",
+  NOMAD: "https://raw.githubusercontent.com/k09876567890e-dot/bizpower-app/main/nomad.png",
+  REVOLUTIONARY: "https://raw.githubusercontent.com/k09876567890e-dot/bizpower-app/main/revolutionary.png",
+  STRATEGIST: "https://raw.githubusercontent.com/k09876567890e-dot/bizpower-app/main/strategist.png",
 };
 
 const App: React.FC = () => {
