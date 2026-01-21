@@ -40,7 +40,7 @@ export const getAIAdvice = async (answers: Answers, result: DiagnosticResult): P
 
     // 3. ご指定の Gemini 3 Flash Preview モデルを使用
     const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview', 
+      model: 'gemini-1.5-flash', 
       contents: {
         role: 'user',
         parts: [{ text: prompt }]
